@@ -20,10 +20,19 @@ gitpulse                          # analyze the current directory
 gitpulse /path/to/repo            # analyze a specific repo
 gitpulse --since "2024-01-01"     # only commits after a date
 gitpulse --author "Jane Doe"      # filter by author
-gitpulse --format json            # json / table / markdown
-gitpulse --top-files 10           # show more hot files
+gitpulse --until "2024-06-01"     # only commits before a date
+gitpulse --author "Jane Doe"      # filter by author
+gitpulse --no-merges              # ignore merge commits
+gitpulse --format json            # table / json / markdown / csv
+gitpulse --top-files 10           # show more hot files (0 hides the section)
+gitpulse --by-hour                # add a commits-per-hour chart
+gitpulse --no-activity            # hide the weekday chart
 gitpulse -o report.md --format markdown   # write a markdown report to a file
+gitpulse --version
 ```
+
+`--top-files`, `--by-hour` and `--no-activity` apply to every output format, so
+a JSON or CSV report contains the same sections as the terminal one.
 
 ### Example output
 
@@ -64,11 +73,25 @@ pytest
 ruff check .
 ```
 
+`--format csv` writes one row per record with a `section` column
+(`overview`, `author`, `weekday`, `hour`, `file`), which imports cleanly into a
+spreadsheet and pivots without further cleanup.
+
+## Notes
+
+- Timestamps are read in each commit's own timezone, so the weekday and hour
+  charts reflect the author's local working hours rather than UTC.
+- Renamed files are attributed to their new path, so a rename does not split a
+  file's history across two entries in the rankings.
+- Authors are grouped by name. Someone who commits under two different names
+  will appear twice.
+
 ## Roadmap
 
-- [ ] CSV export (`--format csv`) for spreadsheet-friendly reports
+- [x] CSV export (`--format csv`) for spreadsheet-friendly reports
 - [ ] Per-file contributor breakdown
 - [ ] Configurable date bucketing for the activity chart (daily/weekly/monthly)
+- [ ] Group authors by email, with a `.mailmap`-aware fallback
 
 ## License
 
